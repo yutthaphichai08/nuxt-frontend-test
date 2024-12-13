@@ -4,16 +4,16 @@
         <div class="mb-3">
             <h5 class="fw-bold">ขนาด</h5>
             <div class="d-flex justify-content-between">
-                <button type="button" class="size-btn btn btn-outline-primary w-100 mx-1"
-                    :class="{ active: selectedSize === 'แนวตั้ง' }" @click="selectedSize = 'แนวตั้ง'">
+                <button type="button" class="size-btn btn w-100 mx-1" :class="{ active: selectedSize === 'แนวตั้ง' }"
+                    @click="selectedSize = 'แนวตั้ง'">
                     แนวตั้ง
                 </button>
-                <button type="button" class="size-btn btn btn-outline-primary w-100 mx-1"
-                    :class="{ active: selectedSize === 'แนวนอน' }" @click="selectedSize = 'แนวนอน'">
+                <button type="button" class="size-btn btn w-100 mx-1" :class="{ active: selectedSize === 'แนวนอน' }"
+                    @click="selectedSize = 'แนวนอน'">
                     แนวนอน
                 </button>
-                <button type="button" class="size-btn btn btn-outline-primary w-100 mx-1"
-                    :class="{ active: selectedSize === 'จตุรัส' }" @click="selectedSize = 'จตุรัส'">
+                <button type="button" class="size-btn btn w-100 mx-1" :class="{ active: selectedSize === 'จตุรัส' }"
+                    @click="selectedSize = 'จตุรัส'">
                     <i class="bi bi-square"></i>
                     จตุรัส
                 </button>
@@ -40,23 +40,24 @@
             </div>
         </div>
 
-
         <!-- สไตล์ภาพ -->
         <div class="mb-3">
             <h5 class="fw-bold">สไตล์ภาพ</h5>
             <div class="row g-2">
                 <div v-for="(style, index) in styles" :key="index" class="col-4 col-md-3">
-                    <button
-                        class="btn btn-outline-secondary w-100 text-center p-0 overflow-hidden rounded position-relative"
+                    <button class="btn btn-outline-secondary w-100 text-center p-0 overflow-hidden position-relative"
                         @click="selectedStyle = style.label" :class="{
                             'btn-primary text-white': selectedStyle === style.label,
                         }">
-                        <div class="image-wrapper">
+                        <div class="image-wrapper position-relative">
                             <img :src="style.image" alt="" class="img-fluid" />
+                            <div class="label-overlay position-absolute start-50 translate-middle-x px-3 py-1 text-dark"
+                                :style="{ backgroundColor: selectedStyle === style.label ? 'rgba(0, 123, 255, 0.7)' : 'rgba(255, 255, 255, 0.5)' }">
+                                {{ style.label }}
+                            </div>
                             <i v-if="selectedStyle === style.label"
-                                class="bi bi-check-circle-fill position-absolute text-primary"></i>
+                                class="bi bi-check-circle-fill position-absolute top-50 start-50 translate-middle text-primary"></i>
                         </div>
-                        <span>{{ style.label }}</span>
                     </button>
                 </div>
             </div>
@@ -99,6 +100,16 @@ const colors = ref({
 
 const selectedColors = ref([]);
 
+const selectedStyle = ref("");
+
+// จำนวนภาพเริ่มต้นและการโหลดเพิ่ม
+const visibleCount = ref(12);
+const visibleStyles = computed(() => styles.value.slice(0, visibleCount.value));
+
+// ฟังก์ชันโหลดเพิ่มเติม
+const loadMore = () => {
+    visibleCount.value += 12; // เพิ่มจำนวนภาพที่แสดง
+};
 // สไตล์ภาพ
 const styles = ref([
     {
@@ -223,16 +234,7 @@ const styles = ref([
             "https://i.pinimg.com/736x/19/db/31/19db31732931019b73bedcf17924f814.jpg",
     },
 ]);
-const selectedStyle = ref("");
 
-// จำนวนภาพเริ่มต้นและการโหลดเพิ่ม
-const visibleCount = ref(12);
-const visibleStyles = computed(() => styles.value.slice(0, visibleCount.value));
-
-// ฟังก์ชันโหลดเพิ่มเติม
-const loadMore = () => {
-    visibleCount.value += 12; // เพิ่มจำนวนภาพที่แสดง
-};
 </script>
 
 <style scoped>
@@ -240,7 +242,27 @@ const loadMore = () => {
 .size-btn {
     border-radius: 8px;
     font-size: 1rem;
+    border: 2px solid transparent;
+    /* กรอบเริ่มต้นไม่มีสี */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
 }
+
+.size-btn.active {
+    border-color: #007bff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* เงาเข้มขึ้นเมื่อเลือก */
+    background-color: rgba(0, 123, 255, 0.1);
+    /* เพิ่มพื้นหลังบางๆ */
+    color: #007bff;
+    /* เปลี่ยนสีข้อความเป็นฟ้า */
+}
+
+.size-btn:hover {
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+    /* เงาเพิ่มเมื่อ hover */
+}
+
 
 /* โทนสี */
 .color-btn {
@@ -257,7 +279,6 @@ const loadMore = () => {
 .image-wrapper {
     width: 100%;
     height: 120px;
-    border-radius: 8px;
     overflow: hidden;
     background-color: #f8f9fa;
     display: flex;
@@ -271,11 +292,21 @@ const loadMore = () => {
     object-fit: cover;
 }
 
+.label-overlay {
+    bottom: 3px;
+    left: 50%;
+    font-size: 1rem;
+    pointer-events: none;
+    width: 95%;
+    text-align: center;
+    border-radius: 8px;
+    background-color: rgba(0, 123, 255, 0.7);
+}
+
 .load-more-btn {
     background: none;
     border: none;
     color: #007bff;
-    /* สีฟ้าเหมือนลิงก์ */
     font-size: 1rem;
     padding: 0;
     cursor: pointer;
