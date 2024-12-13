@@ -1,6 +1,15 @@
-# Nuxt Minimal Starter
+## Features
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Nuxt.js 3: Modern framework for building Vue-based applications.
+Bootstrap 5: Fully integrated for responsive and consistent UI components.
+Dynamic Content: Responsive layout and dynamic content loading.
+Testing Environment: Ready to test frontend components and styles.
+
+## Prerequisites
+
+Ensure that you have the following installed:
+Node.js version 20.17.0 or higher.
+npm (Node Package Manager) to manage dependencies.
 
 ## Setup
 
